@@ -31,19 +31,31 @@ const ShoeCard = ({
       ? 'new-release'
       : 'default'
 
+  let variantText = '';
+
+  if (variant === 'on-sale') {
+    variantText = 'Sale';
+  }
+
+  if (variant === 'new-release') {
+    variantText = 'Just released!';
+  }
+
   return (
     <Link href={`/shoe/${slug}`}>
       <Wrapper>
         <ImageWrapper>
           <Image alt="" src={imageSrc} />
         </ImageWrapper>
+        { variant !== 'default' && <Banner variant={variant}>{variantText}</Banner>}
         <Spacer size={12} />
         <Row>
           <Name>{name}</Name>
-          <Price>{formatPrice(price)}</Price>
+          <Price variant={variant}>{formatPrice(price)}</Price>
         </Row>
         <Row>
           <ColorInfo>{pluralize('Color', numOfColors)}</ColorInfo>
+          { variant === 'on-sale' && <SalePrice>{formatPrice(price)}</SalePrice> }
         </Row>
       </Wrapper>
     </Link>
@@ -55,15 +67,28 @@ const Link = styled.a`
   color: inherit;
 `;
 
-const Wrapper = styled.article``;
-
-const ImageWrapper = styled.div`
+const Wrapper = styled.article`
+  display: flex;
+  flex-direction: column;
   position: relative;
 `;
 
-const Image = styled.img``;
+const ImageWrapper = styled.div`
+  position: relative;
+  display: flex;
+  flex: 1 1 150px;
+  max-width: 300px;
+  border-radius: 16px 4px;
+`;
+
+const Image = styled.img`
+  width: 100%;
+  border-radius: 16px 16px 4px 4px;
+`;
 
 const Row = styled.div`
+  display: flex;
+  flex-wrap: wrap;
   font-size: 1rem;
 `;
 
@@ -72,15 +97,30 @@ const Name = styled.h3`
   color: ${COLORS.gray[900]};
 `;
 
-const Price = styled.span``;
+const Price = styled.span`
+  margin-left: auto;
+  color: ${p => p.variant === 'on-sale' ? COLORS.gray700 : COLORS.gray900};
+  text-decoration: ${p => p.variant === 'on-sale' ? 'line-through' : 'inherit'};
+`;
 
 const ColorInfo = styled.p`
   color: ${COLORS.gray[700]};
 `;
 
+const Banner = styled.div`
+  position: absolute;
+  padding: 8px 12px;
+  font-weight: ${WEIGHTS.bold};
+  color: ${COLORS.white};
+  top: 12px;
+  right: -5px;
+  background-color: ${p => p.variant === 'on-sale' ? COLORS.primary : COLORS.secondary};
+`;
+
 const SalePrice = styled.span`
   font-weight: ${WEIGHTS.medium};
   color: ${COLORS.primary};
+  margin-left: auto;
 `;
 
 export default ShoeCard;
